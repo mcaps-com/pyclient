@@ -2,5 +2,6 @@
 
 ```
 poetry shell
-py pyclient/getprice.py
+python3 pyclient/getprice.py
+python3 pyclient/stream.py
 ```
