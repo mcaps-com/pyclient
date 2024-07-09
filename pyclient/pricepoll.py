@@ -9,12 +9,12 @@ import traceback
 logging.basicConfig(level=logging.DEBUG, format='%(asctime)s - %(levelname)s - %(message)s')
 
 #baseURL = 'http://www.mcaps.com/api/v0'
-baseURL = 'http://mcaps.com/api/v0'
+baseURL = 'https://mcaps.com/api/v0'
 
 
 def get_price(token):
-    url = f"{baseURL}/price/pump/{token}"
-    print(url)
+    url = f"{baseURL}/price/pump/lastprice/{token}"
+    print('url ', url)
     try:
         start_time = time.time()
         response = requests.get(url, headers={'Content-Type': 'application/json'})
