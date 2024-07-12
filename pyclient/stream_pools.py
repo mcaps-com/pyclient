@@ -4,7 +4,7 @@ import requests
 import time
 import logging
 import traceback
-
+import json
 
 # Configure logging
 logging.basicConfig(level=logging.DEBUG, format='%(asctime)s - %(levelname)s - %(message)s')
@@ -18,8 +18,11 @@ async def pools_feed():
         async with websockets.connect(uri) as websocket:
             print(f"Connected to {uri}")
             while True:
-                message = await websocket.recv()
-                print(f"Received message: {message}")
+                msg = await websocket.recv()
+                poolinfo = json.loads(msg)['pool']
+                token, bc, abc = poolinfo['token'], poolinfo['bondingcurve'], poolinfo['ascbondingcurve']
+                print(f"new pool: {token} {bc} {abc}")
+
     except Exception as e:
         print(f"Failed to connect or an error occurred: {e}")
         logging.error(traceback.format_exc())
