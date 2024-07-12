@@ -1,0 +1,6 @@
+[WALLET]
+PKEY = ''
+
+[NODE]
+RPC_HOST = "https://api.solanavibestation.com?api_key="
+WSS_HOST = "wss://api.solanavibestation.com?api_key="
