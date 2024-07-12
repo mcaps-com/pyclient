@@ -231,25 +231,31 @@ def get_data_retry(tokenca):
     return coin_data
 
 def buy_assist(rpc, wallet, tokenca, bc, abc):
-    print(f'walletpub {wallet.pubkey()}')
-    #coin_data = get_data_retry(tokenca)
-    #if coin_data == None: return
-    #print(coin_data['virtual_sol_reserves'])
-    #print(coin_data['virtual_token_reserves'])
-    print('buy.....')
-    #TODO calc input
-    #TODO calc slippage
-    tdec = 6
-    sdec = 9
+    try:
+        logger.info(f'walletpub {wallet.pubkey()}')
+        logger.info(f'buy.....  token: {tokenca}\nbc {bc}\nabc: {abc}')
 
-    token_amnt = 10_000
-    sol_amnt = 0.001
-    token_out = int(token_amnt * 10**tdec)
-    max_sol_cost = int(sol_amnt * 10**sdec)
-    #tokenca =
-    #abc = coin_data['associated_bonding_curve']
-    #bc = coin_data['bonding_curve']
-    return buy(rpc, wallet, tokenca, bc, abc, token_out, max_sol_cost)
+        # Set token and SOL amounts
+        tdec = 6
+        sdec = 9
+        token_amnt = 1_000
+        sol_amnt = 0.0001
+        token_out = int(token_amnt * 10**tdec)
+        max_sol_cost = int(sol_amnt * 10**sdec)
+        logger.info(f'token_out.....  {token_out}\nmax_sol_cost {max_sol_cost}')
+
+        # Execute buy
+        buy_result = buy(rpc, wallet, tokenca, bc, abc, token_out, max_sol_cost)
+
+        # Log buy result
+        logger.info(f'buy_result: {buy_result}')
+        
+        return buy_result
+    except Exception as e:
+        logger.error(f"Error in buy_assist: {e}")
+        logger.error(traceback.format_exc())
+        return {'success': False, 'amount': 0}
+    
 
 def sell_assist(rpc, wallet, tokenca, bc, abc):
     #TODO calc input
@@ -302,8 +308,10 @@ def buy(rpc, payer_keypair, mint, bc, abc, token_out, max_sol_cost):
         except Exception as e:
             logger.error(f'error make buy tx {e}')
 
+        logger.info(f"buy tx {buytx}")
         simulation_result = rpc.simulate_transaction(buytx, sig_verify=True)
         js = json.loads(simulation_result.to_json())
+        print(js)
         verr = js['result']['value']['err']
 
         # Check the simulation result
