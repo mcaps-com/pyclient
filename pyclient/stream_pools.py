@@ -5,12 +5,13 @@ import time
 import traceback
 import json
 from log_config import get_logger
-logger = get_logger()
+logger = get_logger("pools")
 
 # Configure logging
 
 async def pools_feed():
-    uri = "wss://stream.mcaps.com/ws/pools"
+    #uri = "wss://stream.mcaps.com/ws/pools"
+    uri = "wss://95.179.251.158/ws/pools"
     logger.info(f'connect {uri}')
     try:
         async with websockets.connect(uri) as websocket:

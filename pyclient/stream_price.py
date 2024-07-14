@@ -11,7 +11,8 @@ logging.basicConfig(level=logging.DEBUG, format='%(asctime)s - %(levelname)s - %
 
 
 async def price_feed():
-    uri = "wss://stream.mcaps.com/ws/price"
+    #uri = "wss://stream.mcaps.com/ws/price"
+    uri = "wss://95.179.251.158/ws/pools"
     print('connect ', uri)
     try:
         async with websockets.connect(uri) as websocket:
