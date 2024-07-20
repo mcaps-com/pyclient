@@ -10,15 +10,15 @@ logger = get_logger("pools")
 # Configure logging
 
 async def pools_feed():
-    #uri = "wss://stream.mcaps.com/ws/pools"
-    uri = "wss://95.179.251.158/ws/pools"
+    uri = "wss://stream.mcaps.com/ws/pools"
     logger.info(f'connect {uri}')
     try:
         async with websockets.connect(uri) as websocket:
             logger.info(f"Connected to {uri}")
             while True:
                 msg = await websocket.recv()
-                poolinfo = json.loads(msg)['pool']
+                poolinfo = json.loads(msg)
+                print(poolinfo)
                 token, bc, abc = poolinfo['token'], poolinfo['bondingcurve'], poolinfo['ascbondingcurve']
                 logger.info(f"new pool: {token} {bc} {abc}")
 

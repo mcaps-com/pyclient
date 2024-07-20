@@ -7,7 +7,7 @@ import traceback
 import json
 
 # Configure logging
-logging.basicConfig(level=logging.DEBUG, format='%(asctime)s - %(levelname)s - %(message)s')
+logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 
 
 async def price_feed():
@@ -18,7 +18,12 @@ async def price_feed():
             print(f"Connected to {uri}")
             while True:
                 message = await websocket.recv()
-                print(f"Received message: {message}")
+                jmsg = json.loads(message)
+                solbc = jmsg['bondingcurve_sol']
+                if solbc > 70:
+                    print(f"SOL in BC: {solbc} {jmsg['token']}")
+                if solbc >= 85.0:
+                    print(f"COMPLETE {jmsg['token']}")
     except Exception as e:
         print(f"Failed to connect or an error occurred: {e}")
         logging.error(traceback.format_exc())
