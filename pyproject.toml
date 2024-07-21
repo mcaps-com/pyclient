@@ -15,6 +15,8 @@ colored = "^2.2.4"
 base58 = "^2.1.1"
 python-dotenv = "^1.0.1"
 pytz = "^2024.1"
+matplotlib = "^3.9.1"
+mplfinance = "^0.12.10b0"
 
 
 [build-system]
