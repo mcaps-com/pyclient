@@ -9,25 +9,21 @@ logger = get_logger("pools")
 
 # Configure logging
 
-async def pools_feed():
-    uri = "wss://stream.mcaps.com/ws/pump/pools"
+async def socials_feed():
+    uri = "wss://stream.mcaps.com/ws/socials"
     logger.info(f'connect {uri}')
     try:
         async with websockets.connect(uri) as websocket:
             logger.info(f"Connected to {uri}")
             while True:
                 msg = await websocket.recv()
-                poolinfo = json.loads(msg)
-                print(poolinfo)
-                token, bc, abc = poolinfo['token'], poolinfo['bondingcurve'], poolinfo['ascbondingcurve']
-                logger.info(f"new pool: {token} {bc} {abc}")
+                info = json.loads(msg)
+                print(info)
+                
 
     except Exception as e:
         logger.error(f"Failed to connect or an error occurred: {e}")
         logger.error(traceback.format_exc())
 
 
-def stream():
-    asyncio.run(pools_feed())
-
-stream()
+asyncio.run(socials_feed())
