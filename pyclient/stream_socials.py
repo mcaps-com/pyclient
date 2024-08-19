@@ -10,7 +10,7 @@ logger = get_logger("pools")
 # Configure logging
 
 async def socials_feed():
-    uri = "wss://stream.mcaps.com/ws/socials"
+    uri = "wss://stream.mcaps.com/ws/pump/socials"
     logger.info(f'connect {uri}')
     try:
         async with websockets.connect(uri) as websocket:
