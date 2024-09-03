@@ -17,6 +17,7 @@ python-dotenv = "^1.0.1"
 pytz = "^2024.1"
 matplotlib = "^3.9.1"
 mplfinance = "^0.12.10b0"
+tzlocal = "^5.2"
 
 
 [build-system]
