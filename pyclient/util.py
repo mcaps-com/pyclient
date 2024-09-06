@@ -17,12 +17,15 @@ import logging
 logger = logging.getLogger('util')
 
 def get_token_balance(rpc, token_account_pubkey):
-    response = rpc.get_token_account_balance(token_account_pubkey)
-    #print('response ', response)
-    dec = int(response.value.decimals)
-    amnt = response.value.amount
-    v = int(amnt) / 10**dec
-    return v
+    try:
+        response = rpc.get_token_account_balance(token_account_pubkey)
+        #print('response ', response)
+        dec = int(response.value.decimals)
+        amnt = response.value.amount
+        v = int(amnt) / 10**dec
+        return v
+    except Exception as e:
+        print(e)
 
 
 def get_associated_token_account(wallet_address, token_mint_address):
@@ -91,6 +94,7 @@ def get_coin_data(mint_str):
     if response.status_code == 200:
         return response.json()
     else:
+        print("cant get data")
         return None
 
 def confirm_txn(rpc, txsig):
@@ -107,11 +111,11 @@ def confirm_txn(rpc, txsig):
             if txn_json['err'] is None:
                 print("Transaction confirmed... try count:", retries+1)
                 #TODO token amount, sol amount
-                return True
+                return {"success": True}
             print("Error: Transaction not confirmed. Retrying...")
             if txn_json['err']:
                 print("Transaction failed.")
-                return False
+                return {"success": False, "error": txn_json['err']}
         except Exception as e:
             print("Awaiting confirmation... try count:", retries+1)
             retries += 1

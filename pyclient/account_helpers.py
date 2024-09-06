@@ -10,32 +10,78 @@ from solders.pubkey import Pubkey
 from solders.signature import Signature
 from solders.keypair import Keypair
 from typing import Optional
+import asyncio
 from spl.token.instructions import create_associated_token_account, get_associated_token_address, close_account
+import logging
+
+logger = logging.getLogger(__name__)
+
+def wallet_keypair(private_key: str):
+    pair = Keypair.from_base58_string(
+        private_key
+    )
+    return pair
+
+async def get_token_account_retry(rpc, owner, tokenca, max_retries=5, delay=0.2):
+    tokenpub = Pubkey.from_string(tokenca)
+    owner_pubkey = owner.pubkey()
+    token_account = None
+    token_account_instructions = None
+
+    for attempt in range(max_retries):
+        try:
+            account_data = await rpc.get_token_accounts_by_owner(owner_pubkey, TokenAccountOpts(tokenpub))
+            if len(account_data['result']['value']) > 0:
+                token_account = Pubkey.from_string(account_data['result']['value'][0]['pubkey'])
+                token_account_instructions = None
+                break
+            else:
+                # Create account
+                token_account_instructions = create_associated_token_account(owner_pubkey, owner_pubkey, tokenpub)
+                token_account = get_associated_token_address(owner_pubkey, tokenpub)
+                break
+        except Exception as e:
+            logger.error(f"Attempt {attempt + 1} failed: {e}")
+            if attempt < max_retries - 1:
+                logger.info(f"Retrying in {delay} seconds...")
+                await asyncio.sleep(delay)
+            else:
+                raise e
+
+    if token_account is None:
+        raise ValueError("Unable to find or create the token account.")
+
+    return token_account, token_account_instructions
+
+def get_token_create(owner, tokenca):
+    mint = Pubkey.from_string(tokenca)
+    token_account = get_associated_token_address(owner, mint)
+    token_account_instructions = create_associated_token_account(owner, owner, mint)
+    return token_account, token_account_instructions
 
 def get_token_account(rpc, owner, tokenca):
     mint = Pubkey.from_string(tokenca)
     try:
-        account_data = rpc.get_token_accounts_by_owner(owner, TokenAccountOpts(mint))
+        #account_data = rpc.get_token_accounts_by_owner(owner, TokenAccountOpts(mint))
+        account_data = rpc.get_token_accounts_by_owner(owner, TokenAccountOpts(mint), commitment='processed')
         token_account = account_data.value[0].pubkey
         token_account_instructions = None
-        print('account exists ', token_account)
-    except:
+        logger.info(f"account exists {token_account}")
+    except Exception as e:
         token_account = get_associated_token_address(owner, mint)
         token_account_instructions = create_associated_token_account(owner, owner, mint)
-        print('account not exists ', token_account_instructions)
+        logger.info(f"account not exists need to create \ntoken_account_instructions: {token_account_instructions}")
     return token_account, token_account_instructions
+
 
 
 def get_token_accountold(client, owner: PublicKey, mint: PublicKey):
     account_data = client.get_token_accounts_by_owner(owner, TokenAccountOpts(mint))
-    print("mint", account_data.value[0].pubkey)
+    logger.info(f"mint {account_data.value[0].pubkey}")
     return account_data.value[0].pubkey
 
 
-def set_solana_client(development_url: Optional[
-            str
-        ] = "https://api.mainnet-beta.solana.com", # lol I left this in...
-                      ):
+def set_solana_client(development_url):
     solana_client = Client(development_url, timeout=30)
     return solana_client
 
@@ -88,18 +134,18 @@ def get_token_wallet_address_from_main_wallet_address(
             .value[0]
             .pubkey
         )
-        print("Got the token account for the coin")
+        logger.info("Got the token account for the coin")
     except:
         token_wallet_address_public_key = (
             spl_client.create_associated_token_account(
                 owner=main_wallet_address,
             )
         )
-        print("WARNING: had to create a token account for the coin")
+        logger.error("WARNING: had to create a token account for the coin")
     return token_wallet_address_public_key
 
 
-def create_account(private_key, wallet_address, program_id, mint):
+def create_account(sol_client, private_key, wallet_address, program_id, mint):
     main_wallet = wallet_address
     source_main_wallet_keypair = set_source_main_wallet_keypair(private_key)
     sender_pubkey = set_main_wallet_publickey(wallet_address)
@@ -107,9 +153,8 @@ def create_account(private_key, wallet_address, program_id, mint):
     token_address_pubkey = set_token_address_publickey(mint)
 
     # set clients
-    solana_client = set_solana_client()
     spl_client = set_spl_client(
-        solana_client,
+        sol_client,
         token_address_pubkey, program_pubkey, source_main_wallet_keypair
     )
 
