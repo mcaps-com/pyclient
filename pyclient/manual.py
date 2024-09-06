@@ -33,8 +33,6 @@ def example_buy():
     bc = "HwEH8X8ow2GF8TC6vxh7pt1xL8rHTNvxgVmqntJUWP2i"
     abc = "7PiFhJu61j4ZtE9sNrE1XxtVvhq5KWMSAiYQF2d9fqe"
 
-    # info = get_token_info(token)
-    # print("token info ", info)
 
     # RPC_HOST = os.getenv("RPC_HOST")
     #[tokenamnt, v] = get_token_balance_from_pubkey(rpc, walletpub, tokenca)
@@ -49,7 +47,7 @@ def example_buy():
 
     token_amnt = 1000
     price = 0.0001
-    pumptx.buy_assist(sol_client, keypair, token, bc, abc, True, token_amnt, price)
+    pumptx.buy_assist(sol_client, keypair, token, bc, abc, False, token_amnt, price)
 
     # token_amnt = 1_000
     # pumptx.sell_assist(sol_client, keypair, token, bc, abc, token_amnt, False)

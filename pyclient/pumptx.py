@@ -234,7 +234,7 @@ def buy_assist(rpc, wallet, tokenca, bc, abc, create_ata, token_amnt, price):
     #logger.info(f'walletpub {wallet.pubkey()}')
 
     logger.warn(f'!!BUY. token: {tokenca} token_amnt {token_amnt} price {price}')
-    logger.info(f"bc {bc} abc {abc}")
+    logger.info(f"bc {bc} abc {abc}")    
 
     token_decimals = 6
     sol_decimals = 9
