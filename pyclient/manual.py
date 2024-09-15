@@ -92,6 +92,10 @@ def sell():
     if tokenbal > 0:
         token_amnt = tokenbal
         pumptx.sell_assist(sol_client, keypair, token, bc, abc, token_amnt, False)
+        token_amnt = 1000
+        #price = 0.0001
+        #pumptx.buy_assist(sol_client, keypair, token, bc, abc, False, token_amnt, price)
+
 
     # if sb > 0.01:
     #     #buy(rpc, payer, tokenca, sol_in=0.001)
@@ -101,5 +105,5 @@ def sell():
 
 
 if __name__ == "__main__":
-    example_buy()
-    #sell()
+    #example_buy()
+    sell()
