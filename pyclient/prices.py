@@ -26,13 +26,13 @@ def query_test():
 if __name__ == "__main__":
     #query_test()
     token = "9WLGaJxYLAMHL6Ge3JrLnNrpEE4snDFU32gw6zpDpump"
-    # data = query_last(token)
-    # print(data)
-    # time.sleep(1.5)
+    data = query_last(token)
+    print(data)
+    time.sleep(1.5)
 
-    # data = query_history(token)
-    # print(data)
-    # time.sleep(0.2)
+    data = query_history(token)
+    print(data)
+    time.sleep(0.2)
 
     data = query_info(token)
     print(data)
