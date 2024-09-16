@@ -23,7 +23,6 @@ def make_get_request(endpoint):
     """Make a GET request to the specified endpoint with the required headers."""
     url = f"{BASE_URL}/{endpoint}"
     headers = get_headers()
-    #response = requests.get(url, headers=headers)
-    response = requests.get(url)
+    response = requests.get(url, headers=headers)
     response.raise_for_status()  # Raise an exception for HTTP errors
     return response.json()

@@ -1,3 +1,4 @@
+import time
 import pytz
 from tzlocal import get_localzone
 from api import make_get_request
@@ -13,15 +14,29 @@ def query_history(token):
 def query_last(token):        
     return make_get_request(f"pump/lastprice/{token}")
 
+def query_info(token):    
+    return make_get_request(f"pump/info/{token}")
+
+def query_test():        
+    result = make_get_request(f"test")
+    print(result)
+    result = make_get_request(f"test2")
+    print(result)
 
 if __name__ == "__main__":
-    
+    #query_test()
     token = "9WLGaJxYLAMHL6Ge3JrLnNrpEE4snDFU32gw6zpDpump"
-    data = query_last(token)
-    print(data)
+    # data = query_last(token)
+    # print(data)
+    # time.sleep(1.5)
 
-    data = query_history(token)
+    # data = query_history(token)
+    # print(data)
+    # time.sleep(0.2)
+
+    data = query_info(token)
     print(data)
+    time.sleep(0.2)
     
     # print(data['price_sol'])
     # print(data['marketcap'])
