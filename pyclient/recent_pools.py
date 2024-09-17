@@ -34,13 +34,14 @@ if __name__ == "__main__":
         print("-" * 50)
         
         # Print each data row with unix_time_utc converted to local datetime
+        print(columns)
         for row in recentpools_data[1:]:
             # Convert the unix_time_utc column to local datetime
-            unix_time_utc = row[columns.index("unix_time_utc")]
-            datetime_local = unix_to_local_datetime(int(unix_time_utc))
+            #unix_time_utc = row[columns.index("timestamp_unix")]
+            #datetime_local = unix_to_local_datetime(int(unix_time_utc))
             
             # Insert the formatted datetime at the start of the row
-            row.insert(0, datetime_local)
+            #row.insert(0, datetime_local)
             
             print(" | ".join(str(item) for item in row))
     else:
